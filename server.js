@@ -41,3 +41,19 @@ app.use('/api/services', servicesRoutes);
 app.use('/api/partners', partnersRoutes);
 app.use('/api/testimonials', testimonialsRoutes);
 app.use('/api/admin', adminRoutes);
+// Health check endpoint
+app.get('/api/health', (req, res) => {
+  res.json({ 
+    status: 'OK', 
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime()
+  });
+});
+
+// Serve frontend
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+// Error handling middleware
+app.use(errorHandler);
