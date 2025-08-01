@@ -55,3 +55,42 @@ const initializeDatabase = () => {
           updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
         )
       `);
+ db.run(`
+        CREATE TABLE IF NOT EXISTS partners (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          name TEXT NOT NULL,
+          logo_url TEXT,
+          website_url TEXT,
+          description TEXT,
+          is_active BOOLEAN DEFAULT 1,
+          created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+          updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
+      `);
+
+      // Testimonials table
+      db.run(`
+        CREATE TABLE IF NOT EXISTS testimonials (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          name TEXT NOT NULL,
+          position TEXT,
+          company TEXT,
+          message TEXT NOT NULL,
+          rating INTEGER DEFAULT 5,
+          avatar_url TEXT,
+          is_active BOOLEAN DEFAULT 1,
+          created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+          updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
+      `);
+
+      // Newsletter subscriptions table
+      db.run(`
+        CREATE TABLE IF NOT EXISTS newsletter_subscriptions (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          email TEXT UNIQUE NOT NULL,
+          is_active BOOLEAN DEFAULT 1,
+          created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
+      `);
+      
