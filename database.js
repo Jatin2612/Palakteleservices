@@ -150,4 +150,62 @@ const insertDefaultData = () => {
       price_range: 'Custom pricing'
     }
   ];
-  
+   defaultServices.forEach(service => {
+    db.run(`
+      INSERT OR IGNORE INTO services (title, description, icon, features, price_range)
+      VALUES (?, ?, ?, ?, ?)
+    `, [service.title, service.description, service.icon, service.features, service.price_range]);
+  });
+
+  // Insert default partners
+  const defaultPartners = [
+    { name: 'Tata Teleservices', logo_url: '/images/partners/tata.png', website_url: 'https://www.tatateleservices.com' },
+    { name: 'Reliance Jio', logo_url: '/images/partners/jio.png', website_url: 'https://www.jio.com' },
+    { name: 'Vodafone Idea', logo_url: '/images/partners/vodafone.png', website_url: 'https://www.vodafoneidea.com' },
+    { name: 'Airtel', logo_url: '/images/partners/airtel.png', website_url: 'https://www.airtel.in' }
+  ];
+
+  defaultPartners.forEach(partner => {
+    db.run(`
+      INSERT OR IGNORE INTO partners (name, logo_url, website_url)
+      VALUES (?, ?, ?)
+    `, [partner.name, partner.logo_url, partner.website_url]);
+  });
+
+  // Insert default testimonials
+  const defaultTestimonials = [
+    {
+      name: 'Rohan Mehta',
+      position: 'CEO',
+      company: 'TechVista Solutions',
+      message: 'PALAK TELESERVICES transformed our enterprise communication with their PRI solutions. Their 24/7 support is exceptional.',
+      rating: 5,
+      avatar_url: '/images/testimonials/rohan.jpg'
+    },
+    {
+      name: 'Anita Desai',
+      position: 'Head of Operations',
+      company: 'RetailChain India',
+      message: 'Their bulk SIM card distribution service saved us time and money. The corporate plans are perfectly tailored for our national workforce.',
+      rating: 5,
+      avatar_url: '/images/testimonials/anita.jpg'
+    },
+    {
+      name: 'Vijay Kumar',
+      position: 'IT Manager',
+      company: 'FinServ Corp',
+      message: 'The enterprise solutions from PALAK TELESERVICES provide the reliability our financial services require. Excellent account management.',
+      rating: 4,
+      avatar_url: '/images/testimonials/vijay.jpg'
+    }
+  ];
+
+  defaultTestimonials.forEach(testimonial => {
+    db.run(`
+      INSERT OR IGNORE INTO testimonials (name, position, company, message, rating, avatar_url)
+      VALUES (?, ?, ?, ?, ?, ?)
+    `, [testimonial.name, testimonial.position, testimonial.company, testimonial.message, testimonial.rating, testimonial.avatar_url]);
+  });
+};
+
+module.exports = { db, initializeDatabase };
