@@ -68,3 +68,28 @@ const serviceRequestValidation = [
     .isIn(['immediate', '1-month', '3-months', '6-months', 'flexible'])
     .withMessage('Invalid timeline')
 ];
+
+const newsletterValidation = [
+  body('email')
+    .isEmail()
+    .normalizeEmail()
+    .withMessage('Please provide a valid email address')
+];
+
+const loginValidation = [
+  body('email')
+    .isEmail()
+    .normalizeEmail()
+    .withMessage('Please provide a valid email address'),
+  body('password')
+    .isLength({ min: 6 })
+    .withMessage('Password must be at least 6 characters long')
+];
+
+module.exports = {
+  handleValidationErrors,
+  contactValidation,
+  serviceRequestValidation,
+  newsletterValidation,
+  loginValidation
+};
