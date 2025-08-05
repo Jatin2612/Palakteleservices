@@ -150,3 +150,85 @@ router.get('/service-requests', (req, res) => {
       countQuery += ' WHERE status = ?';
       countParams.push(status);
     }
+
+    db.get(countQuery, countParams, (err, countResult) => {
+      if (err) {
+        return res.status(500).json({ error: 'Failed to fetch request count' });
+      }
+
+      res.json({
+        requests,
+        pagination: {
+          page,
+          limit,
+          total: countResult.total,
+          pages: Math.ceil(countResult.total / limit)
+        }
+      });
+    });
+  });
+});
+
+// Update service request status
+router.put('/service-requests/:id/status', (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
+
+  if (!['pending', 'reviewing', 'quoted', 'approved', 'in-progress', 'completed', 'cancelled'].includes(status)) {
+    return res.status(400).json({ error: 'Invalid status' });
+  }
+
+  db.run(
+    'UPDATE service_requests SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
+    [status, id],
+    function(err) {
+      if (err) {
+        return res.status(500).json({ error: 'Failed to update request status' });
+      }
+
+      if (this.changes === 0) {
+        return res.status(404).json({ error: 'Service request not found' });
+      }
+
+      res.json({ message: 'Service request status updated successfully' });
+    }
+  );
+});
+
+// Newsletter subscribers management
+router.get('/newsletter-subscribers', (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 50;
+  const offset = (page - 1) * limit;
+
+  db.all(
+    'SELECT * FROM newsletter_subscriptions WHERE is_active = 1 ORDER BY created_at DESC LIMIT ? OFFSET ?',
+    [limit, offset],
+    (err, subscribers) => {
+      if (err) {
+        return res.status(500).json({ error: 'Failed to fetch subscribers' });
+      }
+
+      db.get(
+        'SELECT COUNT(*) as total FROM newsletter_subscriptions WHERE is_active = 1',
+        (err, countResult) => {
+          if (err) {
+            return res.status(500).json({ error: 'Failed to fetch subscriber count' });
+          }
+
+          res.json({
+            subscribers,
+            pagination: {
+              page,
+              limit,
+              total: countResult.total,
+              pages: Math.ceil(countResult.total / limit)
+            }
+          });
+        }
+      );
+    }
+  );
+});
+
+module.exports = router;
