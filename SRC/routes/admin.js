@@ -97,3 +97,56 @@ router.get('/inquiries', (req, res) => {
 router.put('/inquiries/:id/status', (req, res) => {
   const { id } = req.params;
   const { status } = req.body;
+
+  if (!['pending', 'in-progress', 'resolved', 'closed'].includes(status)) {
+    return res.status(400).json({ error: 'Invalid status' });
+  }
+
+  db.run(
+    'UPDATE contact_inquiries SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
+    [status, id],
+    function(err) {
+      if (err) {
+        return res.status(500).json({ error: 'Failed to update inquiry status' });
+      }
+
+      if (this.changes === 0) {
+        return res.status(404).json({ error: 'Inquiry not found' });
+      }
+
+      res.json({ message: 'Inquiry status updated successfully' });
+    }
+  );
+});
+
+// Service requests management
+router.get('/service-requests', (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 20;
+  const offset = (page - 1) * limit;
+  const status = req.query.status;
+
+  let query = 'SELECT * FROM service_requests';
+  let params = [];
+
+  if (status) {
+    query += ' WHERE status = ?';
+    params.push(status);
+  }
+
+  query += ' ORDER BY created_at DESC LIMIT ? OFFSET ?';
+  params.push(limit, offset);
+
+  db.all(query, params, (err, requests) => {
+    if (err) {
+      return res.status(500).json({ error: 'Failed to fetch service requests' });
+    }
+
+    // Get total count
+    let countQuery = 'SELECT COUNT(*) as total FROM service_requests';
+    let countParams = [];
+
+    if (status) {
+      countQuery += ' WHERE status = ?';
+      countParams.push(status);
+    }
