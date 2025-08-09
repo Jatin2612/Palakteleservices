@@ -88,3 +88,32 @@ router.post('/newsletter', newsletterValidation, handleValidationErrors, async (
     res.status(500).json({ error: 'Server error' });
   }
 });
+
+// Unsubscribe from newsletter
+router.post('/newsletter/unsubscribe', newsletterValidation, handleValidationErrors, async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    db.run(
+      'UPDATE newsletter_subscriptions SET is_active = 0 WHERE email = ?',
+      [email],
+      function(err) {
+        if (err) {
+          return res.status(500).json({ error: 'Failed to unsubscribe' });
+        }
+
+        if (this.changes === 0) {
+          return res.status(404).json({ error: 'Email not found in subscription list' });
+        }
+
+        res.json({
+          message: 'Successfully unsubscribed from newsletter'
+        });
+      }
+    );
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+module.exports = router;
