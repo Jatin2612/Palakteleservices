@@ -107,4 +107,37 @@ router.post('/request', serviceRequestValidation, handleValidationErrors, async 
         } catch (emailError) {
           console.error('Email error:', emailError);
         }
-        
+        res.status(201).json({
+          message: 'Service request submitted successfully',
+          requestId: this.lastID
+        });
+      }
+    );
+  } catch (error) {
+    console.error('Service request error:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Get service request status
+router.get('/request/:id/status', (req, res) => {
+  const { id } = req.params;
+
+  db.get(
+    'SELECT id, status, created_at, updated_at FROM service_requests WHERE id = ?',
+    [id],
+    (err, request) => {
+      if (err) {
+        return res.status(500).json({ error: 'Failed to fetch request status' });
+      }
+
+      if (!request) {
+        return res.status(404).json({ error: 'Service request not found' });
+      }
+
+      res.json(request);
+    }
+  );
+});
+
+module.exports = router;
