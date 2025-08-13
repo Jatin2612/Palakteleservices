@@ -95,3 +95,49 @@ const templates = {
       </div>
     `
   }),
+
+  'newsletter-welcome': (data) => ({
+    subject: 'Welcome to PALAK TELESERVICES Newsletter',
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <div style="background: linear-gradient(135deg, #4f46e5 0%, #10b981 100%); padding: 20px; text-align: center;">
+          <h1 style="color: white; margin: 0;">Welcome to Our Newsletter!</h1>
+        </div>
+        <div style="padding: 30px; background: #f8fafc;">
+          <h2 style="color: #1e293b;">Thank you for subscribing!</h2>
+          <p style="color: #64748b; line-height: 1.6;">
+            You'll now receive updates about our latest telecom solutions, industry insights, and special offers.
+          </p>
+          <p style="color: #64748b;">
+            Stay connected with PALAK TELESERVICES for the latest in enterprise communication solutions.
+          </p>
+        </div>
+        <div style="background: #1e293b; padding: 20px; text-align: center; color: white;">
+          <p style="margin: 0;">© 2023 PALAK TELESERVICES. All rights reserved.</p>
+        </div>
+      </div>
+    `
+  })
+};
+
+const sendEmail = async ({ to, subject, template, data }) => {
+  try {
+    const templateData = templates[template](data);
+    
+    const mailOptions = {
+      from: process.env.EMAIL_FROM,
+      to,
+      subject: templateData.subject,
+      html: templateData.html
+    };
+
+    const result = await transporter.sendMail(mailOptions);
+    console.log('Email sent successfully:', result.messageId);
+    return result;
+  } catch (error) {
+    console.error('Email sending failed:', error);
+    throw error;
+  }
+};
+
+module.exports = { sendEmail };
