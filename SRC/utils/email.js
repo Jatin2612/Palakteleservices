@@ -66,3 +66,32 @@ const templates = {
       </div>
     `
   }),
+ 'service-request-confirmation': (data) => ({
+    subject: 'Service Request Received - PALAK TELESERVICES',
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <div style="background: linear-gradient(135deg, #4f46e5 0%, #10b981 100%); padding: 20px; text-align: center;">
+          <h1 style="color: white; margin: 0;">PALAK TELESERVICES</h1>
+        </div>
+        <div style="padding: 30px; background: #f8fafc;">
+          <h2 style="color: #1e293b;">Service Request Received</h2>
+          <p style="color: #64748b;">Dear ${data.name},</p>
+          <p style="color: #64748b; line-height: 1.6;">
+            Thank you for your service request. We have received your inquiry for <strong>${data.service_type}</strong> services.
+          </p>
+          <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0;">
+            <h3 style="color: #1e293b; margin-top: 0;">Request ID: #${data.requestId}</h3>
+            <p style="color: #64748b;"><strong>Service Type:</strong> ${data.service_type}</p>
+            <p style="color: #64748b;"><strong>Requirements:</strong></p>
+            <p style="color: #64748b; font-style: italic;">"${data.requirements}"</p>
+          </div>
+          <p style="color: #64748b;">
+            Our team will review your requirements and get back to you with a detailed proposal within 2-3 business days.
+          </p>
+        </div>
+        <div style="background: #1e293b; padding: 20px; text-align: center; color: white;">
+          <p style="margin: 0;">© 2023 PALAK TELESERVICES. All rights reserved.</p>
+        </div>
+      </div>
+    `
+  }),
